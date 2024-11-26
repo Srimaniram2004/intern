@@ -8,32 +8,35 @@ const Home = () => {
   const [scannedText, setScannedText] = useState('');
 
   const handleTextChange = (e) => {
-    setText(e.target.value);  // Update text as user types
+    setText(e.target.value); 
   };
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setImage(URL.createObjectURL(file));  // Set image URL for preview
-      scanTextFromImage(file);  // Extract text from image
+      setImage(URL.createObjectURL(file));
+      scanTextFromImage(file);
     }
   };
 
   const scanTextFromImage = (file) => {
     Tesseract.recognize(
       file,
-      'tam',  // Use Tamil language for OCR
+      'eng+tam',
+      
       {
-        logger: (m) => console.log(m),  // Log OCR progress
+        logger: (m) => console.log(m), 
       }
     ).then(({ data: { text } }) => {
-      setScannedText(text);  // Set the extracted Tamil text into the state
+      setScannedText(text); 
     }).catch((err) => {
       console.error("Error scanning image:", err);
     });
   };
 
   return (
+    <>
+    <h1>Welcome To EveryOne  </h1>
     <div className="home-container">
       <div className="left-side">
         <div className="text-box">
@@ -42,14 +45,14 @@ const Home = () => {
             id="text-box"
             value={text}
             onChange={handleTextChange}
-            placeholder="Type something..."
+            placeholder="Type Here..."
             rows="4"
             cols="50"
           />
         </div>
 
         <div className="image-upload">
-          <label htmlFor="image-upload">Upload an image with Tamil text:</label>
+          <label htmlFor="image-upload">Upload an image with Tamil And English text:</label>
           <input
             type="file"
             id="image-upload"
@@ -63,15 +66,19 @@ const Home = () => {
       <div className="right-side">
         <div className="display-text">
           <h3>Entered Text:</h3>
-          <p>{text}</p>  {/* Display the entered text */}
+          <p>{text}</p> 
         </div>
 
         <div className="scanned-text">
           <h3>Extracted Tamil Text from Image:</h3>
-          <p>{scannedText ? scannedText : 'No text extracted yet'}</p>  {/* Display extracted Tamil text */}
+          <p>{scannedText ? scannedText : 'No text extracted yet'}</p> 
         </div>
       </div>
     </div>
+    <footer>
+            <h4>Developed by team</h4>
+    </footer>
+    </>
   );
 };
 
