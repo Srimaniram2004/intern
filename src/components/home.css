@@ -6,20 +6,25 @@
 }
 
 body {
-  font-family: 'Arial', sans-serif;
-  background-color: #f4f7fc; 
-  color: #333; 
+  margin: 0; /* Removes default margin */
+  padding: 0; /* Removes default padding */
+  height: 100%; /* Sets the height to 100% of the viewport */
+  width: 100%; /* Sets the width to 100% of the viewport */
+  background-image: url('./thiruvalluvar2.jpg');
+  background-size: cover; /* Ensures the image covers the full page */
+  background-position: center; /* Centers the image */
+  background-repeat: repeat; /* Prevents the image from repeating */
 }
 
 .home-container {
   display: flex;
   justify-content: space-between;
-  padding: 20px;
-  gap: 20px;
-  max-width: 1200px;
-  margin: 0 auto;
-  background-color: #ffffff; 
-  border-radius: 8px;
+  padding: 10px;
+  gap: 100px;
+  margin-top: 100px;
+  margin-left: 75px;
+  margin-right:75px ;
+  border-radius: 20px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
@@ -28,8 +33,14 @@ body {
   flex: 1;
   background-color: #ffffff; 
   padding: 20px;
+  margin-right: 100px;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background: rgb(223,223,202);
+  background: linear-gradient(90deg, rgba(223,223,202,1) 0%, rgba(223,223,202,1) 98%);
+  border-width: 2px;
+  border-color: #4a4a4a;
+  border-style: solid; /* Add this */
 }
 
 .right-side {
@@ -38,6 +49,11 @@ body {
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background: rgb(223,223,202);
+  background: linear-gradient(90deg, rgba(223,223,202,1) 0%, rgba(223,223,202,1) 98%);
+  border-color: #4a4a4a;
+  border-width: 2px;
+  border-style: solid; /* Add this */
 }
 
 
@@ -60,6 +76,9 @@ body {
   resize: vertical;
   outline: none;
   transition: border-color 0.3s ease;
+  border-color: #4a4a4a;
+  border-width: 2px;
+  border-style: solid; /* Add this */
 }
 
 .text-box textarea:focus {
@@ -68,16 +87,20 @@ body {
 
 .image-upload {
   margin-top: 20px;
+  
 }
 
 .image-upload label {
   font-size: 1.1rem;
   font-weight: bold;
   color: #4a4a4a;
+  
 }
+
 
 .image-upload input[type="file"] {
   margin-top: 10px;
+  
 }
 
 
@@ -193,7 +216,7 @@ button {
   }
 }
 
-h1 ,h4{
+/*h1 ,h4{
   font-size: 2.5rem;
   font-weight: 700; 
   color:red;
@@ -207,7 +230,7 @@ h1 ,h4{
   border-radius: 8px; 
   box-shadow: 0 4px 6px rgba(175, 174, 174, 0.1);
   margin:10px; 
-}
+}*/
 
 
 @media (max-width: 768px) {
