@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import './home.css';
 import Tesseract from 'tesseract.js';
 import logo from './THIRUVALLUVAR.png';
-// Check if the browser supports the Web Speech API
+
 const isSpeechRecognitionAvailable = 'webkitSpeechRecognition' in window || 'SpeechRecognition' in window;
 
 const Home = () => {
@@ -13,6 +13,7 @@ const Home = () => {
   const [image, setImage] = useState(null);
   const [recognition, setRecognition] = useState(null);
   const [cameraStream, setCameraStream] = useState(null);
+  const [sliderValue, setSliderValue] = useState(16); // Default font size
   const videoRef = useRef(null);
 
   const handleTextChange = (e) => {
@@ -22,7 +23,8 @@ const Home = () => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setImage(URL.createObjectURL(file));
+      const imageUrl = URL.createObjectURL(file);
+      setImage(imageUrl);
       scanTextFromImage(file);
     }
   };
@@ -124,6 +126,10 @@ const Home = () => {
     }
   };
 
+  const handleSliderChange = (e) => {
+    setSliderValue(Number(e.target.value));
+  };
+
   return (
     <>
       {/* Navbar with logo */}
@@ -135,6 +141,7 @@ const Home = () => {
       {/* Main Content */}
       <div className="home-container">
         <div className="left-side">
+          {/* Text input */}
           <div className="card">
             <label htmlFor="text-box">Enter your text:</label>
             <textarea
@@ -148,6 +155,7 @@ const Home = () => {
             />
           </div>
 
+          {/* Camera section */}
           <div className="card camera-section">
             <button className="primary-button" onClick={openCamera}>Open Camera</button>
             {cameraStream && (
@@ -159,6 +167,7 @@ const Home = () => {
             <video ref={videoRef} className="video-preview" autoPlay muted></video>
           </div>
 
+          {/* File upload and image preview */}
           <div className="card">
             <label htmlFor="image-upload">Upload an image with Tamil and English text:</label>
             <input
@@ -168,8 +177,17 @@ const Home = () => {
               accept="image/*"
               className="file-input"
             />
+            {image && (
+              <>
+                <div className="image-preview-container">
+                  <img src={image} alt="Selected" className="image-preview" />
+                
+                </div>
+              </>
+            )}
           </div>
 
+          {/* Voice recognition */}
           <div className="card">
             <button className="primary-button" onClick={startVoiceRecognition}>Start Voice Recognition</button>
             <button className="danger-button" onClick={stopVoiceRecognition}>Stop Voice Recognition</button>
@@ -179,22 +197,33 @@ const Home = () => {
         </div>
 
         <div className="right-side">
+          {/* Entered text */}
           <div className="card">
             <h3>Entered Text:</h3>
             <p>{text}</p>
           </div>
 
+          {/* Extracted text with slider */}
           <div className="card">
             <h3>Extracted Tamil Text from Image:</h3>
-            <p>{scannedText ? scannedText : 'No text extracted yet'}</p>
+            <input
+              type="range"
+              min="12"
+              max="36"
+              value={sliderValue}
+              onChange={handleSliderChange}
+              className="slider"
+            />
+            <p style={{ fontSize: `${sliderValue}px` }}>
+              {scannedText ? scannedText : 'No text extracted yet'}
+            </p>
           </div>
 
+          {/* Recognized voice text */}
           <div className="card">
             <h3>Recognized Voice Text:</h3>
             <p>{voiceText ? voiceText : 'No voice recognition yet'}</p>
           </div>
-
-          {image && <div className="card"><img src={image} alt="Captured Preview" className="image-preview" /></div>}
         </div>
       </div>
     </>

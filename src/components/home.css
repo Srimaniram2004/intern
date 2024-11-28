@@ -1,5 +1,4 @@
 /* General Styles */
-/* General Styles */
 body {
   font-family: 'Arial', sans-serif;
   margin: 0;
@@ -40,7 +39,7 @@ body {
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
-/* Other styles remain the same */
+/* Left and Right Sections */
 .left-side, .right-side {
   flex: 1;
   display: flex;
@@ -48,13 +47,20 @@ body {
   gap: 20px;
 }
 
+/* Card Styles */
 .card {
+  background-color: #ffffff;
   border: 1px solid #e0e0e0;
   border-radius: 8px;
   padding: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   margin: 10px auto;
-  max-width: 100%; /* Ensure cards fit within container */
+  width: 100%; /* Ensures cards take full width of their container */
+  max-width: 1000px; /* Increase the max-width for a larger card */
+  height: auto; /* Allow height to adjust based on content */
+  display: flex;
+  flex-direction: column; /* Allows elements inside the card to stack vertically */
+  justify-content: space-between; /* Adjust content spacing */
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
@@ -104,11 +110,6 @@ body {
   color: white;
   padding: 10px 20px;
   border: none;
-  border-radius: 10px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s;
-  margin: 5px;
 }
 
 .secondary-button:hover {
@@ -149,6 +150,34 @@ body {
   margin-top: 10px;
 }
 
+/* Vertical Slider Styles */
+.slider-container {
+  width: 100%;
+  height: 300px; /* Adjust the height as needed */
+  overflow-y: auto;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  background-color: #f8f9fa;
+}
+
+.slider {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.slider-item {
+  background-color: #ffffff;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow-wrap: break-word;
+  width: 100%;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .home-container {
@@ -158,6 +187,10 @@ body {
 
   .card {
     width: 100%; /* Make cards fit the screen width */
+  }
+
+  .slider-container {
+    height: 200px; /* Adjust for smaller screens */
   }
 }
 
@@ -186,16 +219,7 @@ body:after {
   z-index: -2;
 }
 
-/*@keyframes rotate {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}*/
 /* Navbar Container */
-/* Navbar Styling */
 .navbar {
   display: flex;
   justify-content: space-between;
@@ -213,7 +237,6 @@ body:after {
   height: auto; /* Maintain aspect ratio */
   display: block; /* Ensure it behaves like a block-level element */
 }
-
 
 .nav-links {
   list-style: none;
@@ -235,4 +258,3 @@ body:after {
 .nav-links a:hover {
   color: #ddd;
 }
-
