@@ -14,6 +14,7 @@ const Home = () => {
   const [recognition, setRecognition] = useState(null);
   const [cameraStream, setCameraStream] = useState(null);
   const [sliderValue, setSliderValue] = useState(16); // Default font size
+  const [voiceLang, setVoiceLang] = useState('en-IN'); // Default to English
   const videoRef = useRef(null);
 
   const handleTextChange = (e) => {
@@ -55,15 +56,13 @@ const Home = () => {
     const img = canvas.toDataURL('image/png');
     setImage(img);
 
-    Tesseract.recognize(
-      img,
-      'eng',
-      { logger: (m) => console.log(m) }
-    ).then(({ data: { text } }) => {
-      setScannedText(text);
-    }).catch((err) => {
-      console.error("Error scanning image:", err);
-    });
+    Tesseract.recognize(img, 'eng+tam', { logger: (m) => console.log(m) })
+      .then(({ data: { text } }) => {
+        setScannedText(text);
+      })
+      .catch((err) => {
+        console.error('Error scanning image:', err);
+      });
   };
 
   const stopCamera = () => {
@@ -74,25 +73,23 @@ const Home = () => {
   };
 
   const scanTextFromImage = (file) => {
-    Tesseract.recognize(
-      file,
-      'eng+tam',
-      { logger: (m) => console.log(m) }
-    ).then(({ data: { text } }) => {
-      setScannedText(text);
-    }).catch((err) => {
-      console.error("Error scanning image:", err);
-    });
+    Tesseract.recognize(file, 'eng+tam', { logger: (m) => console.log(m) })
+      .then(({ data: { text } }) => {
+        setScannedText(text);
+      })
+      .catch((err) => {
+        console.error('Error scanning image:', err);
+      });
   };
 
   const startVoiceRecognition = () => {
     if (!isSpeechRecognitionAvailable) {
-      alert("Your browser does not support speech recognition.");
+      alert('Your browser does not support speech recognition.');
       return;
     }
 
     const recognitionInstance = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-    recognitionInstance.lang = 'en-IN';
+    recognitionInstance.lang = voiceLang;
     recognitionInstance.continuous = true;
     recognitionInstance.interimResults = true;
 
@@ -110,12 +107,12 @@ const Home = () => {
     };
 
     recognitionInstance.onerror = (event) => {
-      console.error("Speech recognition error:", event.error);
+      console.error('Speech recognition error:', event.error);
       setVoiceError(`Error occurred: ${event.error}`);
     };
 
     recognitionInstance.onend = () => {
-      console.log("Speech recognition ended.");
+      console.log('Speech recognition ended.');
     };
   };
 
@@ -128,6 +125,10 @@ const Home = () => {
 
   const handleSliderChange = (e) => {
     setSliderValue(Number(e.target.value));
+  };
+
+  const handleLanguageChange = (e) => {
+    setVoiceLang(e.target.value);
   };
 
   return (
@@ -181,7 +182,6 @@ const Home = () => {
               <>
                 <div className="image-preview-container">
                   <img src={image} alt="Selected" className="image-preview" />
-                
                 </div>
               </>
             )}
@@ -189,6 +189,11 @@ const Home = () => {
 
           {/* Voice recognition */}
           <div className="card">
+            <label htmlFor="language-select">Select Language:</label>
+            <select id="language-select" value={voiceLang} onChange={handleLanguageChange}>
+              <option value="en-IN">English</option>
+              <option value="ta-IN">Tamil</option>
+            </select>
             <button className="primary-button" onClick={startVoiceRecognition}>Start Voice Recognition</button>
             <button className="danger-button" onClick={stopVoiceRecognition}>Stop Voice Recognition</button>
             <p>{voiceText ? `Recognized Voice Text: ${voiceText}` : 'No voice input yet'}</p>
@@ -226,6 +231,14 @@ const Home = () => {
           </div>
         </div>
       </div>
+      {/* New card outside the home-container */}
+      <div className="outside-card">
+        <h2 className='daily_title'>தினம் ஒரு குறள்</h2>
+        <br/>
+        <h4 className="daily">அகர முதல எழுத்தெல்லாம் ஆதி<br/>
+        பகவன் முதற்றே உலகு</h4>
+      </div>
+
     </>
   );
 };

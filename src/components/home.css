@@ -8,9 +8,11 @@ body {
   animation: gradientChange 4s ease infinite;
   color: #333;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  flex-direction: row;
+  /*justify-content: center;
+  align-items: center;*/
   min-height: 100vh;
+  padding-top: 80px; 
 }
 
 @keyframes gradientChange {
@@ -31,14 +33,22 @@ body {
   flex-direction: row;
   gap: 20px;
   width: 90%;
-  max-width: 1200px;
-  margin: 20px auto;
+  max-width: 1000px;
+  margin: 100px auto 20px; /* Add margin-top to avoid collision with navbar */
   flex-wrap: wrap; /* Allow wrapping of content */
   border-radius: 10px;
   padding: 20px;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  justify-content: flex-start; /* Align items to the left */
+  align-items: flex-start; /* Align items to the top */
+  overflow: hidden; /* Prevent content overflow */
 }
 
+.image-preview-container{
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+}
 /* Left and Right Sections */
 .left-side, .right-side {
   flex: 1;
@@ -192,6 +202,16 @@ body {
   .slider-container {
     height: 200px; /* Adjust for smaller screens */
   }
+  .navbar {
+    flex-direction: column; /* Stack items vertically */
+    text-align: center; /* Center align text inside the navbar */
+    padding: 20px;
+  }
+
+  .nav-links {
+    flex-direction: column; /* Stack links vertically */
+    gap: 10px; /* Add spacing between links */
+  }
 }
 
 /* 3D Background */
@@ -222,14 +242,20 @@ body:after {
 /* Navbar Container */
 .navbar {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-between; /* Space between logo and links */
   align-items: center;
   border-color: #81b8f1; /* Match with the background color */
   border-width: 2px;
   padding: 10px 20px;
-  color: white;
+  color:#333;
   border-radius: 8px; /* Rounded corners for a softer look */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Layered shadow */
+  position: absolute; /* Position the navbar */
+  top: 0; /* Place it at the top */
+  left: 50%; /* Start from the center of the page */
+  transform: translateX(-50%); /* Center-align using transform */
+  width: 90%; /* Adjust width for responsiveness */
+  max-width: 1200px; /* Limit max width */
 }
 
 .logo {
@@ -258,3 +284,79 @@ body:after {
 .nav-links a:hover {
   color: #ddd;
 }
+/* New Card outside Home Container */
+/* New Card outside Home Container, Positioned to the Right */
+.outside-card {
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 6px 9px rgba(0, 0, 0, 0.1);
+  margin: 0;
+  width: 500px; /* Default width for larger screens */
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.2s, box-shadow 0.2s;
+  transform: translateY(-50%);
+  border-color: #007bff;
+  border-width: 2px;
+}
+
+.outside-card p {
+  font-size: 16px;
+  color: #333;
+  text-align: center;
+}
+
+.outside-card:hover {
+  transform: translateY(-50%) translateX(5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 1024px) {
+  .outside-card {
+    width: 400px; /* Adjust width for tablets */
+    right: 10px; /* Reduce right margin */
+  }
+}
+
+@media (max-width: 768px) {
+  .outside-card {
+    position: static; /* Stack instead of absolute positioning */
+    transform: translateY(0);
+    margin: 20px auto;
+    width: 90%; /* Take up most of the screen width */
+  }
+}
+.daily_title {
+  display: flex;
+  align-items: center; /* Vertically center */
+  justify-content: center; /* Horizontally center */
+  padding: 10px;
+  font-size: 18px; /* Default font size */
+  color: #007bff;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .daily_title {
+    font-size: 16px; /* Reduce font size on smaller screens */
+    padding: 8px; /* Adjust padding */
+  }
+}
+
+@media (max-width: 480px) {
+  .daily_title {
+    font-size: 14px; /* Further reduce font size for very small screens */
+    text-align: center;
+  }
+}
+
+
+
+
+
