@@ -34,12 +34,6 @@ const Home = () => {
     };
 
     fetchDailyKural();
-
-    // Set up an interval to fetch a new Kural every hour
-    const intervalId = setInterval(fetchDailyKural, 3600000); // 3600000ms = 1 hour
-
-    // Cleanup the interval on component unmount
-    return () => clearInterval(intervalId);
   }, []);
 
   const handleTextChange = (e) => {
