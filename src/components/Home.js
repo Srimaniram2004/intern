@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './home.css';
 import Tesseract from 'tesseract.js';
 import logo from './THIRUVALLUVAR.png';
@@ -15,7 +15,32 @@ const Home = () => {
   const [cameraStream, setCameraStream] = useState(null);
   const [sliderValue, setSliderValue] = useState(16); // Default font size
   const [voiceLang, setVoiceLang] = useState('en-IN'); // Default to English
+  const [dailyKural, setDailyKural] = useState(null); // State to store daily Kural data
   const videoRef = useRef(null);
+
+  // Fetch the daily Kural data when the component loads
+  useEffect(() => {
+    const fetchDailyKural = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/kural/daily-kural'); // Ensure this matches your backend
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const data = await response.json();
+        setDailyKural(data);
+      } catch (error) {
+        console.error('Error fetching daily Kural:', error);
+      }
+    };
+
+    fetchDailyKural();
+
+    // Set up an interval to fetch a new Kural every hour
+    const intervalId = setInterval(fetchDailyKural, 3600000); // 3600000ms = 1 hour
+
+    // Cleanup the interval on component unmount
+    return () => clearInterval(intervalId);
+  }, []);
 
   const handleTextChange = (e) => {
     setText(e.target.value);
@@ -136,7 +161,7 @@ const Home = () => {
       {/* Navbar with logo */}
       <nav className="navbar">
         <img src={logo} alt="Logo" className="logo" />
-        <h1 className="navbar-title"></h1>
+        <h1 className="navbar-title">THIRUKURAL</h1>
       </nav>
 
       {/* Main Content */}
@@ -179,11 +204,9 @@ const Home = () => {
               className="file-input"
             />
             {image && (
-              <>
-                <div className="image-preview-container">
-                  <img src={image} alt="Selected" className="image-preview" />
-                </div>
-              </>
+              <div className="image-preview-container">
+                <img src={image} alt="Selected" className="image-preview" />
+              </div>
             )}
           </div>
 
@@ -231,14 +254,22 @@ const Home = () => {
           </div>
         </div>
       </div>
-      {/* New card outside the home-container */}
-      <div className="outside-card">
-        <h2 className='daily_title'>தினம் ஒரு குறள்</h2>
-        <br/>
-        <h4 className="daily">அகர முதல எழுத்தெல்லாம் ஆதி<br/>
-        பகவன் முதற்றே உலகு</h4>
-      </div>
 
+      {/* New card outside the home-container to show daily Kural */}
+      <div className="outside-card">
+        <h2 className="daily_title">தினம் ஒரு குறள்</h2>
+        <h4 className="daily">
+          {dailyKural ? (
+            <>
+              <p>{dailyKural.Verse}</p>
+              <p>{dailyKural.Explanation}</p>
+              <p>{dailyKural.Translation}</p>
+            </>
+          ) : (
+            <p>Loading the daily Kural...</p>
+          )}
+        </h4>
+      </div>
     </>
   );
 };
