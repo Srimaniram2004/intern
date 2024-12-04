@@ -7,6 +7,7 @@ const isSpeechRecognitionAvailable = 'webkitSpeechRecognition' in window || 'Spe
 
 const Home = () => {
   const [text, setText] = useState('');
+  const [searchResult, setSearchResult] = useState(''); // State to store search results
   const [scannedText, setScannedText] = useState('');
   const [voiceText, setVoiceText] = useState('');
   const [voiceError, setVoiceError] = useState('');
@@ -36,9 +37,40 @@ const Home = () => {
     fetchDailyKural();
   }, []);
 
+  // Handle text input changes
   const handleTextChange = (e) => {
     setText(e.target.value);
   };
+
+  // Handle text searching
+  // Handle text searching
+  const handleSearch = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/kural/search', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ text }), // Send search text in request body
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      
+      // If 'results' contains duplicates or is being set multiple times, we'll only set the first unique set of results.
+      const uniqueResults = Array.from(new Set(data.results.map(a => a._id)))
+        .map(id => data.results.find(a => a._id === id));
+  
+      setSearchResult(uniqueResults || 'No results found.');
+    } catch (error) {
+      console.error('Error searching text:', error);
+      setSearchResult('Error occurred while searching.');
+    }
+  };
+  
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -162,6 +194,7 @@ const Home = () => {
       <div className="home-container">
         <div className="left-side">
           {/* Text input */}
+          {/* Text input and search result display */}
           <div className="card">
             <label htmlFor="text-box">Enter your text:</label>
             <textarea
@@ -173,7 +206,27 @@ const Home = () => {
               cols="50"
               className="input-area"
             />
+            <button className="primary-button" onClick={handleSearch}>Search</button>
+            {searchResult && (
+              <div>
+                {/* Displaying the search result object if it contains valid results */}
+                {Array.isArray(searchResult) ? (
+                  searchResult.map((result) => (
+                    <div key={result._id}>
+                      <h4>Chapter: {result['Chapter Name']}</h4>
+                      <h4>Section: {result['Section Name']}</h4>
+                      <p><strong>Verse:</strong> {result.Verse}</p>
+                      <p><strong>Translation:</strong> {result.Translation}</p>
+                      <p><strong>Explanation:</strong> {result.Explanation}</p>
+                    </div>
+                  ))
+                ) : (
+                  <p>{searchResult}</p>
+                )}
+              </div>
+            )}
           </div>
+
 
           {/* Camera section */}
           <div className="card camera-section">
