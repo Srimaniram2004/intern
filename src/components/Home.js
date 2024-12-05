@@ -126,46 +126,102 @@ const Home = () => {
   const scanTextFromImage = (file) => {
     Tesseract.recognize(file, 'eng+tam', { logger: (m) => console.log(m) })
       .then(({ data: { text } }) => {
-        setScannedText(text);
+        setScannedText(text); // Update the state with the extracted text
+        console.log('Scanned text:', text);
+
+        // Now, send the extracted text to the backend (database)
+        sendTextToBackend(text);
       })
       .catch((err) => {
         console.error('Error scanning image:', err);
       });
   };
 
-  const startVoiceRecognition = () => {
-    if (!isSpeechRecognitionAvailable) {
-      alert('Your browser does not support speech recognition.');
-      return;
+  // Function to send extracted text to the backend for searching or storing
+  const sendTextToBackend = async (extractedText) => {
+    try {
+      const response = await fetch('http://localhost:5000/api/kural/search', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ text: extractedText }), // Sending the extracted text
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      setSearchResult(data.results || 'No results found.'); // Display the search results from DB
+    } catch (error) {
+      console.error('Error searching extracted text:', error);
+      setSearchResult('Error occurred while searching.');
+    }
+  };
+
+
+ const startVoiceRecognition = () => {
+  if (!isSpeechRecognitionAvailable) {
+    alert('Your browser does not support speech recognition.');
+    return;
+  }
+
+  const recognitionInstance = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+  recognitionInstance.lang = voiceLang;
+  recognitionInstance.continuous = true;
+  recognitionInstance.interimResults = true;
+
+  setRecognition(recognitionInstance);
+
+  recognitionInstance.start();
+
+  recognitionInstance.onresult = async (event) => {
+    let transcript = '';
+    for (let i = event.resultIndex; i < event.results.length; i++) {
+      transcript += event.results[i][0].transcript;
     }
 
-    const recognitionInstance = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-    recognitionInstance.lang = voiceLang;
-    recognitionInstance.continuous = true;
-    recognitionInstance.interimResults = true;
+    setVoiceText(transcript);
+    setVoiceError('');
 
-    setRecognition(recognitionInstance);
+    // After getting the voice recognition text, search it in the database
+    try {
+      const response = await fetch('http://localhost:5000/api/kural/search', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ text: transcript }), // Sending the recognized text
+      });
 
-    recognitionInstance.start();
-
-    recognitionInstance.onresult = (event) => {
-      let transcript = '';
-      for (let i = event.resultIndex; i < event.results.length; i++) {
-        transcript += event.results[i][0].transcript;
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
       }
-      setVoiceText(transcript);
-      setVoiceError('');
-    };
 
-    recognitionInstance.onerror = (event) => {
-      console.error('Speech recognition error:', event.error);
-      setVoiceError(`Error occurred: ${event.error}`);
-    };
+      const data = await response.json();
 
-    recognitionInstance.onend = () => {
-      console.log('Speech recognition ended.');
-    };
+      // Set the search results based on the response
+      const uniqueResults = Array.from(new Set(data.results.map(a => a._id)))
+        .map(id => data.results.find(a => a._id === id));
+
+      setSearchResult(uniqueResults || 'No results found.');
+    } catch (error) {
+      console.error('Error searching voice text:', error);
+      setSearchResult('Error occurred while searching.');
+    }
   };
+
+  recognitionInstance.onerror = (event) => {
+    console.error('Speech recognition error:', event.error);
+    setVoiceError(`Error occurred: ${event.error}`);
+  };
+
+  recognitionInstance.onend = () => {
+    console.log('Speech recognition ended.');
+  };
+};
+
 
   const stopVoiceRecognition = () => {
     if (recognition) {
