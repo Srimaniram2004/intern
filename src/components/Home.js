@@ -130,7 +130,7 @@ const Home = () => {
         console.log('Scanned text:', text);
 
         // Now, send the extracted text to the backend (database)
-        sendTextToBackend(text);
+        handleSearch1(text);
       })
       .catch((err) => {
         console.error('Error scanning image:', err);
@@ -138,24 +138,29 @@ const Home = () => {
   };
 
   // Function to send extracted text to the backend for searching or storing
-  const sendTextToBackend = async (extractedText) => {
+  const handleSearch1 = async (text) => {
     try {
       const response = await fetch('http://localhost:5000/api/kural/search', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ text: extractedText }), // Sending the extracted text
+        body: JSON.stringify({ text }), // Send search text in request body
       });
-
+  
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
-
+  
       const data = await response.json();
-      setSearchResult(data.results || 'No results found.'); // Display the search results from DB
+      
+      // If 'results' contains duplicates or is being set multiple times, we'll only set the first unique set of results.
+      const uniqueResults = Array.from(new Set(data.results.map(a => a._id)))
+        .map(id => data.results.find(a => a._id === id));
+  
+      setSearchResult(uniqueResults || 'No results found.');
     } catch (error) {
-      console.error('Error searching extracted text:', error);
+      console.error('Error searching text:', error);
       setSearchResult('Error occurred while searching.');
     }
   };
@@ -262,25 +267,9 @@ const Home = () => {
               cols="50"
               className="input-area"
             />
+           
             <button className="primary-button" onClick={handleSearch}>Search</button>
-            {searchResult && (
-              <div>
-                {/* Displaying the search result object if it contains valid results */}
-                {Array.isArray(searchResult) ? (
-                  searchResult.map((result) => (
-                    <div key={result._id}>
-                      <h4>Chapter: {result['Chapter Name']}</h4>
-                      <h4>Section: {result['Section Name']}</h4>
-                      <p><strong>Verse:</strong> {result.Verse}</p>
-                      <p><strong>Translation:</strong> {result.Translation}</p>
-                      <p><strong>Explanation:</strong> {result.Explanation}</p>
-                    </div>
-                  ))
-                ) : (
-                  <p>{searchResult}</p>
-                )}
-              </div>
-            )}
+           
           </div>
 
 
@@ -333,6 +322,32 @@ const Home = () => {
             <h3>Entered Text:</h3>
             <p>{text}</p>
           </div>
+          <div className="right-side">
+            <div className="card">
+            <h1>Search Results:</h1>
+             
+            {searchResult && (
+              <div>
+                {/* Displaying the search result object if it contains valid results */}
+                {Array.isArray(searchResult) ? (
+                  searchResult.map((result) => (
+                    <div key={result._id}>
+                      
+                      <h4>Chapter: {result['Chapter Name']}</h4>
+                      <h4>Section: {result['Section Name']}</h4>
+                      <p><strong>Verse:</strong> {result.Verse}</p>
+                      <p><strong>Translation:</strong> {result.Translation}</p>
+                      <p><strong>Explanation:</strong> {result.Explanation}</p>
+                    </div>
+                  ))
+                ) : (
+                  <p>{searchResult}</p>
+                )}
+              </div>
+            )}
+          </div>
+          </div>
+         
 
           {/* Extracted text with slider */}
           <div className="card">
@@ -357,6 +372,7 @@ const Home = () => {
           </div>
         </div>
       </div>
+     
 
       {/* New card outside the home-container to show daily Kural */}
       <div className="outside-card">
