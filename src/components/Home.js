@@ -107,9 +107,10 @@ const Home = () => {
     const img = canvas.toDataURL('image/png');
     setImage(img);
 
-    Tesseract.recognize(img, 'eng+tam', { logger: (m) => console.log(m) })
+    Tesseract.recognize(img, 'tam', { logger: (m) => console.log(m) })
       .then(({ data: { text } }) => {
         setScannedText(text);
+        handleSearch1(text);
       })
       .catch((err) => {
         console.error('Error scanning image:', err);
