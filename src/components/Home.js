@@ -360,24 +360,28 @@
               <h1>Search Results:</h1>
               
               {searchResult && (
-                <div>
-                  {/* Displaying the search result object if it contains valid results */}
-                  {Array.isArray(searchResult) ? (
-                    searchResult.map((result) => (
-                      <div key={result._id}>
-                        
-                        <h4>Chapter: {result['Chapter Name']}</h4>
-                        <h4>Section: {result['Section Name']}</h4>
-                        <p><strong>Verse:</strong> {result.Verse}</p>
-                        <p><strong>Translation:</strong> {result.Translation}</p>
-                        <p><strong>Explanation:</strong> {result.Explanation}</p>
+                      <div>
+                        {/* Displaying the search result object if it contains valid results */}
+                        {Array.isArray(searchResult) ? (
+                          searchResult.map((result) => (
+                            <div key={result._id}>
+                              <h4>Chapter: {result['Chapter Name']}</h4>
+                              <h4>Section: {result['Section Name']}</h4>
+                              
+                              {/* Apply the formatVerse function to the Verse */}
+                              <p><strong>Verse:</strong> {formatVerse(result.Verse)}</p>
+                              
+                              <p><strong>Translation:</strong> {result.Translation}</p>
+                              <p><strong>Explanation:</strong> {result.Explanation}</p>
+                            </div>
+                          ))
+                        ) : (
+                          <p>{searchResult}</p>
+                        )}
                       </div>
-                    ))
-                  ) : (
-                    <p>{searchResult}</p>
-                  )}
-                </div>
-              )}
+                    )}
+
+              
             </div>
             </div>
           
