@@ -251,6 +251,21 @@ const Home = () => {
         <img src={logo} alt="Logo" className="logo" />
         <h1 className="navbar-title">THIRUKURAL</h1>
       </nav>
+          {/* New card outside the home-container to show daily Kural */}
+          <div className="outside-card">
+        <h2 className="daily_title">தினம் ஒரு குறள்</h2>
+        <h4 className="daily">
+          {dailyKural ? (
+            <>
+              <p>{dailyKural.Verse}</p>
+              <p>{dailyKural.Explanation}</p>
+              <p>{dailyKural.Translation}</p>
+            </>
+          ) : (
+            <p>Loading the daily Kural...</p>
+          )}
+        </h4>
+      </div>
 
       {/* Main Content */}
       <div className="home-container">
@@ -375,21 +390,7 @@ const Home = () => {
       </div>
      
 
-      {/* New card outside the home-container to show daily Kural */}
-      <div className="outside-card">
-        <h2 className="daily_title">தினம் ஒரு குறள்</h2>
-        <h4 className="daily">
-          {dailyKural ? (
-            <>
-              <p>{dailyKural.Verse}</p>
-              <p>{dailyKural.Explanation}</p>
-              <p>{dailyKural.Translation}</p>
-            </>
-          ) : (
-            <p>Loading the daily Kural...</p>
-          )}
-        </h4>
-      </div>
+  
     </>
   );
 };
