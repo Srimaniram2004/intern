@@ -135,64 +135,39 @@ router.get('/daily-kural', async (req, res) => {
 //     res.status(500).json({ message: 'Server error' });
 //   }
 // });
-router.post('/translate', async (req, res) => {
-  const { text } = req.body;
-  
-  if (!text) {
-    return res.status(400).json({ message: 'Text to translate is required' });
-  }
-
-  try {
-    // Call Gemini API for translation (replace 'API_KEY' with your actual Gemini API key)
-    const response = await axios.post('https://gemini-api.com/translate', {
-      api_key: '',
-      text: text,
-      target_lang: 'ta' // Translate to Tamil
-    });
-
-    const translatedText = response.data.translated_text; // Adjust according to Gemini's response format
-    res.status(200).json({ translatedText });
-  } catch (error) {
-    console.error('Error translating text:', error);
-    res.status(500).json({ message: 'Error translating text' });
-  }
-});
 
 
 router.post('/search', async (req, res) => {
   const { text } = req.body;
-
   if (!text) {
     console.log('No text provided');
     return res.status(400).json({ message: 'Search text is required' });
   }
-
   try {
-    // Normalize the search text
-    const normalizedText = text.trim();
-
-    // Search for the section name in the database
-    const results = await Kural.find({
-      SectionName: { $regex: normalizedText, $options: 'i' } // Case-insensitive search in SectionName
-    });
-
-    if (results.length > 0) {
-      console.log(`Found ${results.length} Kurals in the section: "${normalizedText}"`);
-
-      // Send back the list of Kurals (including their Verse) from the matching section
-      return res.status(200).json({ results });
-    } else {
-      return res.status(404).json({ message: 'No matching section found' });
+    // Split the input sentence into individual words
+    const words = text.trim().split(/\s+/); // Split by spaces
+    let searchResults = [];
+    // Loop through each word and search in the database
+    for (let word of words) {
+      const result = await Kural.findOne({
+        Verse: { $regex: word, $options: 'i' }, // Use regex for case-insensitive search
+      });
+      if (result) {
+        console.log(`Found matching verse for word: "${word}"`);
+        searchResults.push(result);
+      } else {
+        console.log(`No matching verse found for word: "${word}"`);
+      }
     }
-
+    // If any results are found, send them back as response
+    if (searchResults.length > 0) {
+      return res.status(200).json({ results: searchResults });
+    } else {
+      return res.status(404).json({ message: 'No matching verses found' });
+    }
   } catch (error) {
     console.log('Error while searching:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });
-
-
-
-    
-
 module.exports = router;
