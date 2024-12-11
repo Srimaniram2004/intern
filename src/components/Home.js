@@ -2,6 +2,8 @@
   import './home.css';
   import Tesseract from 'tesseract.js';
   import logo from './THIRUVALLUVAR.png';
+import Navbar from './Navbar';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
 
   const isSpeechRecognitionAvailable = 'webkitSpeechRecognition' in window || 'SpeechRecognition' in window;
 
@@ -154,6 +156,28 @@
           console.error('Error scanning image:', err);
         });
     };
+            const handleTranslate = async () => {
+              try {
+                const response = await fetch('http://localhost:5000/api/kural/translate', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({ text }), // Send the text to translate
+                });
+            
+                if (!response.ok) {
+                  throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+            
+                const data = await response.json();
+                setText(data.translatedText); // Set the translated text to the input box or wherever needed
+              } catch (error) {
+                console.error('Error translating text:', error);
+                alert('Error occurred while translating.');
+              }
+            };
+            
 
     // Function to send extracted text to the backend for searching or storing
     const handleSearch1 = async (text) => {
@@ -266,7 +290,10 @@
         {/* Navbar with logo */}
         <nav className="navbar">
           <img src={logo} alt="Logo" className="logo" />
-          <h1 className="navbar-title">THIRUKURAL</h1>
+          <h1 className="navbar-title" style={{textAlign:"center"}}>THIRUKURAL</h1>
+          <Link to="/chat">
+              <button className="primary-button">Chat With AI</button>
+            </Link>
         </nav>
             {/* New card outside the home-container to show daily Kural */}
             <div className="outside-card">
@@ -300,7 +327,7 @@
                 cols="50"
                 className="input-area"
               />
-            
+              <button className="primary-button" onClick={handleTranslate}>Translate</button>
               <button className="primary-button" onClick={handleSearch}>Search</button>
             
             </div>
@@ -366,7 +393,7 @@
                           searchResult.map((result) => (
                             <div key={result._id}>
                               <h4>Chapter: {result['Chapter Name']}</h4>
-                              <h4>Section: {result['Section Name']}</h4>
+                              <h4>Section: {result.SectionName}</h4>
                               
                               {/* Apply the formatVerse function to the Verse */}
                               <p><strong>Verse:</strong> {formatVerse(result.Verse)}</p>
